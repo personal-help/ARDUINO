@@ -8,7 +8,7 @@ bool Century=false;
 bool h12;
 bool PM;
 
-byte year, month, date, DoW, hour, minute, second; //ДВУЗНАЧНЫЕ ЗНАЧЕНИЯ С ДАТЧИКА DS3231
+byte year, month, date, DoW, hour, minute, second; //ДВОИЧНЫЕ ЗНАЧЕНИЯ С ДАТЧИКА DS3231
 
 int SECOND,MINUTE,HOUR,DAYWEEK,DAYMONTH,MONTH,YEAR; //ДЕСЯТИЧНЫЕ ЗНАЧЕНИЯ ДЛЯ ВСЕХ ФУНКЦИЙ
 
@@ -28,6 +28,12 @@ String ALLDAYSWEEK [7] = {"ВОСК","ПОНЕ","ВТОР","СРЕД","ЧЕТВ"
       {15,40},{16,25},{16,28},{16,30},{17,15} 
     };
 
+   String couple[] = {"НАЧАЛО","ПАР 1/1","5 МИН","ПРЕДВ","ПАР 1/2","ПЕРЕРЫВ","ПРЕДВ",
+                               "ПАР 2/1","5 МИН","ПРЕДВ","ПАР 2/2","ПЕРЕРЫВ","ПРЕДВ",
+                               "ПАР 3/1","5 МИН","ПРЕДВ","ПАР 3/2","ПЕРЕРЫВ","ПРЕДВ",
+                               "ПАР 4/1","5 МИН","ПРЕДВ","ПАР 4/2","ПЕРЕРЫВ","ПРЕДВ",
+                               "ПАР 5/1","5 МИН","ПРЕДВ","ПАР 5/2","КОНЕЦ"};
+
 void setup(){ 
   pinMode(1,OUTPUT);
   pinMode(2,OUTPUT);
@@ -44,7 +50,6 @@ void setup(){
   pinMode(13,OUTPUT);
   
   lcd.begin(16, 2);
-  Serial.begin(9600);
   Wire.begin();
  
 //////////ИЗМЕМЕНЕНИЕ ДАТЫ////////////////////////////////////////////////
@@ -140,6 +145,11 @@ void TIMER(){ //ТАЙМЕР
        lcd.print(":");
        if((59-SECOND)<10){lcd.print("0");}
        lcd.print(59-SECOND);
+
+       if(changeMode==2){
+         lcd.setCursor(0,1);
+         lcd.print(couple[i]);
+       }
      }
    }
 }
@@ -159,21 +169,30 @@ void onOff(){ //ВКЛЮЧЕНИЕ И ВЫКЛЮЧЕНИЕ
     }
   
     switch(mode){ 
-      case 1:{
-        digitalWrite(6,LOW); 
+      case 1:{ 
         mode=2;
-        break;}
+        break;
+      }
     
       case 2:{
-        digitalWrite(6,HIGH); 
         mode=1;
-        break;}
+        break;
+      }
     }
 }
 
 void clockOnOff(){//ВКЛЮЧЕНИЕ И ВЫКЛЮЧЕНИЕ // КНОПКА
  int x = 0;
   if(digitalRead(2) == HIGH){
+    if(changeMode==2){
+      lcd.clear();
+      lcd.setCursor(0,0);
+      lcd.print(L"АКТИВАЦИЯ 5 СЕК");
+
+      lcd.setCursor(3,1);
+      lcd.print(L"ВКЛ / ВЫКЛ");
+    }
+    
     for(int i=0;i<50;i++){
       delay(100);
       if(digitalRead(2) == HIGH){x++;}
@@ -183,7 +202,7 @@ void clockOnOff(){//ВКЛЮЧЕНИЕ И ВЫКЛЮЧЕНИЕ // КНОПКА
   }
 }
 
-void activate(){//АКТИВАЦИЯ ЦВОНКА
+void activate(){//АКТИВАЦИЯ ЗВОНКА
   lcd.clear();
   lcd.setCursor(5,0);
   lcd.print(L"ЗВОНОК");
@@ -195,6 +214,15 @@ void activate(){//АКТИВАЦИЯ ЦВОНКА
 void bellNow(){//ВКЛЮЧЕНИЕ ЗВОНКА КНОПКОЙ
   int x = 0;
   if(digitalRead(3) == HIGH){
+    if(changeMode==2){
+      lcd.clear();
+      lcd.setCursor(0,0);
+      lcd.print(L"АКТИВАЦИЯ 5 СЕК");
+
+      lcd.setCursor(4,1);
+      lcd.print(L"ЗВОНОК");
+    }
+    
     for(int i=0;i<50;i++){
       delay(100);
       if(digitalRead(3) == HIGH){x++;}
@@ -238,29 +266,30 @@ void displayDate(){//ОТОБРАЖЕНИЕ ДАТЫ
 void sign(){//ИНДИКАТОР
   lcd.setCursor(0,0);
   lcd.print("*");
-  delay(170);
+
+  digitalWrite(6,HIGH);
+  delay(500);
+
   lcd.setCursor(0,0);
-  lcd.print("*");
-  delay(170);
-  lcd.setCursor(0,0);
-  lcd.print("*");
-  delay(160);
+  lcd.print(" ");
+  digitalWrite(6,LOW);
 }
 
 void ifOnOff(int check){
  
   switch(check){
     case 1:{
-      displayDate();
       sign();
+      displayDate();
       comparator(HOUR,MINUTE); 
-
-      digitalWrite(6,HIGH);
+ 
+      break;
     }
     case 2:{
       displayDate();
 
       digitalWrite(6,LOW);
+      break;
     }
   }
 }
@@ -269,6 +298,15 @@ void changeTime(){
   int x = 0;   
   
   if(digitalRead(4) == HIGH){//ПЕРЕКЛЮЧЕНИЕ РЕДАКТИРОВАНИЯ ВРЕМЕНИ
+
+    if(changeMode==2){
+      lcd.clear();
+      lcd.setCursor(0,0);
+      lcd.print(L"АКТИВАЦИЯ 5 СЕК");
+
+      lcd.setCursor(0,1);
+      lcd.print(L"РЕДАКТОР ВРЕМЕНИ");
+    }
     for(int i=0;i<50;i++){
       delay(100);
       if(digitalRead(4) == HIGH){x++;}
