@@ -14,7 +14,7 @@ int SECOND,MINUTE,HOUR,DAYWEEK,DAYMONTH,MONTH,YEAR; //ДЕСЯТИЧНЫЕ ЗН�
 
 String ALLDAYSWEEK [7] = {"ВОСК","ПОНЕ","ВТОР","СРЕД","ЧЕТВ","ПЯТН","СУБО"}; //ДНИ НЕДЕЛИ
 
-  int del = 150;                      
+  int del = 100;                      
   int tonePin = 7;
   int mode = 1;
   int changeMode = 2;
@@ -75,7 +75,7 @@ void MDK(){//МЕЛОДИЯ ЗВОНКА //МОРТАЛ КОМБАТ
     tone(tonePin, 440, 164.2335);delay(182.481666667);delay(91.2408333333);tone(tonePin, 391, 109.489);
     delay(121.654444444);delay(60.8272222222);tone(tonePin, 329, 109.489);delay(121.654444444);
     delay(60.8272222222);tone(tonePin, 440, 164.2335);delay(182.481666667);delay(91.2408333333);
-    tone(tonePin, 440, 164.2);delay(182.481666667);delay(91.2408333333);tone(tonePin, 440, 164.2335);
+    tone(toneP  in, 440, 164.2);delay(182.481666667);delay(91.2408333333);tone(tonePin, 440, 164.2335);
     delay(182.481666667);delay(91.2408333333);tone(tonePin, 440, 164.2335);delay(182.481666667);
     delay(91.2408333333);tone(tonePin, 391, 109.489);delay(121.654444444);delay(60.8272222222);
     tone(tonePin, 523, 109.489);delay(121.654444444);delay(60.8272222222);tone(tonePin, 440, 164.2335);
